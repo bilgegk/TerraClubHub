@@ -1,4 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using TerraClubHub.Models;
 
 public class ClubHubContext : DbContext
 {
