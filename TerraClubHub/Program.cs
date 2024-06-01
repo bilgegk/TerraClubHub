@@ -1,23 +1,22 @@
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
-using TerraClubHub.Data;  // Ensure this namespace points to where your ClubHubContext is located.
+using TerraClubHub.Data;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
-// Using the default connection string for Identity
-var defaultConnectionString = builder.Configuration.GetConnectionString("ClubHubConnection") ?? throw new InvalidOperationException("Connection string 'DefaultConnection' not found.");
-builder.Services.AddDbContext<ApplicationDbContext>(options =>
-    options.UseSqlServer(defaultConnectionString));
-builder.Services.AddDatabaseDeveloperPageExceptionFilter();
+var connectionString = builder.Configuration.GetConnectionString("ClubHubConnection");
 
-// Using the ClubHub connection string for your application-specific data
-var clubHubConnectionString = builder.Configuration.GetConnectionString("ClubHubConnection") ?? throw new InvalidOperationException("Connection string 'ClubHubConnection' not found.");
+builder.Services.AddDbContext<ApplicationDbContext>(options =>
+    options.UseSqlServer(connectionString));
+
 builder.Services.AddDbContext<ClubHubContext>(options =>
-    options.UseSqlServer(clubHubConnectionString));  // This uses your ClubHubDb
+    options.UseSqlServer(connectionString));
 
 builder.Services.AddDefaultIdentity<IdentityUser>(options => options.SignIn.RequireConfirmedAccount = true)
+    .AddRoles<IdentityRole>()
     .AddEntityFrameworkStores<ApplicationDbContext>();
+
 builder.Services.AddControllersWithViews();
 
 var app = builder.Build();
@@ -38,11 +37,28 @@ app.UseStaticFiles();
 
 app.UseRouting();
 
+app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllerRoute(
     name: "default",
     pattern: "{controller=Home}/{action=Index}/{id?}");
+
 app.MapRazorPages();
+
+// Ensure the database is updated with the latest migrations
+using (var scope = app.Services.CreateScope())
+{
+    var services = scope.ServiceProvider;
+    var userManager = services.GetRequiredService<UserManager<IdentityUser>>();
+    var roleManager = services.GetRequiredService<RoleManager<IdentityRole>>();
+    var dbContext = services.GetRequiredService<ApplicationDbContext>();
+
+    // Automatically apply any pending migrations for ApplicationDbContext
+    dbContext.Database.Migrate();
+
+    // Initialize seed data
+    await SeedData.Initialize(services, userManager, roleManager);
+}
 
 app.Run();
