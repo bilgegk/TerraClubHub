@@ -4,12 +4,12 @@
     ViewData["Title"] = "Club Activities";
 }
 
-<h2>Club Activities</h2>
+<h2 class="heading-custom">Club Activities</h2>
 
 <p>
-    <a asp-action="Create">Create New Club Activity</a>
+    <a asp-action="Create" class="btn btn-primary">Create New Club Activity</a>
 </p>
-<table class="table">
+<table class="table table-custom">
     <thead>
         <tr>
             <th>@Html.DisplayNameFor(model => model.Name)</th>
@@ -38,9 +38,9 @@
                 <td>@Html.DisplayFor(modelItem => item.NumberOfMembersParticipated)</td>
                 <td>@Html.DisplayFor(modelItem => item.Club.Name)</td>
                 <td>
-                    <a asp-action="Edit" asp-route-id="@item.ID">Edit</a> |
-                    <a asp-action="Details" asp-route-id="@item.ID">Details</a> |
-                    <a asp-action="Delete" asp-route-id="@item.ID">Delete</a>
+                    <a asp-action="Edit" asp-route-id="@item.ID" class="btn btn-sm btn-info">Edit</a> |
+                    <a asp-action="Details" asp-route-id="@item.ID" class="btn btn-sm btn-secondary">Details</a> |
+                    <a asp-action="Delete" asp-route-id="@item.ID" class="btn btn-sm btn-danger">Delete</a>
                 </td>
             </tr>
         }
