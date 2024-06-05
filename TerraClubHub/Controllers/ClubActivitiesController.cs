@@ -53,7 +53,7 @@ namespace TerraClubHub.Controllers
         // POST: ClubActivities/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("ID,Name,Description,StartDate,EndDate,Location,Budget,File,CostPerPerson,NumberOfMembersParticipated,Image,ClubId")] ClubActivity clubActivity)
+        public async Task<IActionResult> Create([Bind("Name,Description,StartDate,EndDate,Location,Budget,CostPerPerson,NumberOfMembersParticipated,FilePath,ClubID")] ClubActivity clubActivity)
         {
             if (ModelState.IsValid)
             {
@@ -61,7 +61,7 @@ namespace TerraClubHub.Controllers
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["ClubId"] = new SelectList(_context.Clubs, "ID", "Name", clubActivity.ClubId);
+            ViewData["ClubId"] = new SelectList(_context.Clubs, "ID", "Name", clubActivity.ClubID);
             return View(clubActivity);
         }
 
@@ -78,7 +78,7 @@ namespace TerraClubHub.Controllers
             {
                 return NotFound();
             }
-            ViewData["ClubId"] = new SelectList(_context.Clubs, "ID", "Name", clubActivity.ClubId);
+            ViewData["ClubId"] = new SelectList(_context.Clubs, "ID", "Name", clubActivity.ClubID);
             return View(clubActivity);
         }
 
@@ -112,7 +112,7 @@ namespace TerraClubHub.Controllers
                 }
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["ClubId"] = new SelectList(_context.Clubs, "ID", "Name", clubActivity.ClubId);
+            ViewData["ClubId"] = new SelectList(_context.Clubs, "ID", "Name", clubActivity.ClubID);
             return View(clubActivity);
         }
 
